@@ -1,4 +1,4 @@
-## MERN-Admin-Panel
+## MERN-Admin-ERP
 
 ## Available Script
 
