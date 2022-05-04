@@ -1,9 +1,9 @@
 {
-  "name": "login-registration",
+  "name": "admin-ERP",
   "version": "1.0.0",
-  "description": "A simple mern application for login-registration system",
+  "description": "A simple mern application for admin ERP",
   "main": "server.js",
-  "author": "Neha Sharma",
+  "author": "Bharghav",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
