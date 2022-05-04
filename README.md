@@ -13,3 +13,13 @@ cd client and run
 
 `npm run build`
 
+Login Creds
+ADMIN:
+admin123@gmail.com
+password123
+
+EMPLOYEE:
+employee2@gmail.com
+password
+
+Go to users form the sidebar and click on the first action button of employee2 to get into the task page with already populated data

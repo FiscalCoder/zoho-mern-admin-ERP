@@ -28,7 +28,7 @@ class Dashboard extends Component {
                             <button className="btn btn-link mt-2" id="menu-toggle"><FontAwesomeIcon icon={faList} /></button>
                             <h1 className="mt-2 text-primary">Dashboard</h1>
                             <div className="row px-2">
-                                <div className="col-sm-3 p-sm-2">
+                                {this.props.isAdmin && <div className="col-sm-3 p-sm-2">
                                     <div className="card bg-primary text-white shadow-lg">
                                         <div className="card-body">
                                             <h5 className="card-title">Users</h5>
@@ -38,6 +38,7 @@ class Dashboard extends Component {
                                         </div>
                                     </div>
                                 </div>
+                                }
                                 <div className="col-sm-3 p-sm-2">
                                     <div className="card bg-secondary text-white shadow-lg">
                                         <div className="card-body">
@@ -83,7 +84,8 @@ Dashboard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    auth: state.auth
+    auth: state.auth,
+    isAdmin: state.auth.user.isAdmin
 });
 
 export default connect(

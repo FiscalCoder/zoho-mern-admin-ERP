@@ -93,10 +93,12 @@ class Tasks extends Component {
 
                         />
 
-                        <div className="container mt-4">
-                            <button className="btn btn-sm btn-secondary float-right mr-4" data-toggle="modal" data-target="#taskModal">Add Task</button>
+                        {this.props.isAdmin &&
+                            <div className="container mt-4">
+                                <button className="btn btn-sm btn-secondary float-right mr-4" data-toggle="modal" data-target="#taskModal">Add Task</button>
+                            </div>
+                        }
 
-                        </div>
                         <section className="">
                             <div className="container py-4 h-100">
                                 <div className="row d-flex h-100">

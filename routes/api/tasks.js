@@ -53,14 +53,27 @@ router.post('/task-add', (req, res) => {
 });
 
 router.post('/task-edit', (req, res) => {
-    const keyName = "changedTaskName"
+    const keyName = req.body.keyName
     const { errors, isValid } = validateTaskInput(req.body, keyName);
     if (!isValid) {
         return res.status(400).json(errors);
     }
 
+    const updateFields = {
+        name: req.body.changedTaskName,
+        taskComment: req.body.taskComment,
+        status: req.body.taskStatus
+    }
+
+    Object.keys(updateFields).forEach(key => {
+        if (updateFields[key] === undefined) {
+            delete updateFields[key];
+        }
+    })
+
+
     Task
-        .findOneAndUpdate({ _id: req.body.taskID }, { name: req.body[keyName] })
+        .findOneAndUpdate({ _id: req.body.taskID }, updateFields)
         .then(task => {
             console.log(task)
             return res.status(200).json({ message: 'Task edited successfully. Refreshing data...' })
@@ -80,6 +93,15 @@ router.post('/task-delete', (req, res) => {
         }).catch(err => console.log(err));
 
 });
+
+router.post('/task-comment-delete', (req, res) => {
+    Task
+        .findOneAndUpdate({ _id: req.body.taskID }, { taskComment: "" })
+        .then(task => {
+            return res.status(200).json({ message: 'Task Comment deleted successfully. Refreshing data...' })
+        }).catch(err => console.log(err));
+});
+
 
 
 

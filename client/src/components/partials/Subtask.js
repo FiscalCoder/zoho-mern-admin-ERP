@@ -8,6 +8,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons/faPencilAlt";
 import MultiLevelDropdown from "./MultiLevelDropdown";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { capitalizeFirstLetter } from "../../utils/helperFunctions";
 
 import axios from "axios";
 
@@ -93,7 +94,6 @@ class SubTask extends Component {
 
 
     render() {
-        console.log("ISADD", this.props)
         const subTaskId = this.props.subtask._id
 
         return (
@@ -141,7 +141,8 @@ class SubTask extends Component {
 
                 <div className="row w-100">
                     <div className="col-8">
-                        <s>{this.props.subtask.name}</s>
+                        {this.props.subtask.name}
+                        <div className="text-muted"> • {capitalizeFirstLetter(this.props.subtask.status)}</div>
                         <div className="px-2" style={{ color: "#a2aab7" }}>{this.props.subtask.subTaskComment}</div>
                     </div>
                     <div className="col-4 p-0">
@@ -216,7 +217,7 @@ class SubTask extends Component {
                         </div>
                     </div>
                 </div>
-            </li>
+            </li >
 
         )
     }

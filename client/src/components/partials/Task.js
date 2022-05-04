@@ -13,31 +13,55 @@ import axios from "axios";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 class Task extends Component {
 
-    addSubTaskToState = (subTask) => {
-        this.setState({
-            currentSubTask: subTask
-        })
-    }
-
     onLogoutClick = e => {
         e.preventDefault();
         this.props.logoutUser();
     };
 
-    editTask(changedNameValue) {
-
-        const newSubTask = {
-            taskID: this.props.task._id,
-            changedTaskName: changedNameValue
-        }
-
+    taskCrudApiCall(editValues) {
         axios
-            .post("/tasks/task-edit", newSubTask)
+            .post("/tasks/task-edit", editValues)
             .then(res => {
+                console.log("RESSSSEDIT", res)
+
                 this.props.getTaskData()
             })
             .catch(err => console.log(err))
+
     }
+
+    changeTaskStatus(statusValue) {
+        const editTaskStatus = {
+            taskID: this.props.task._id,
+            taskStatus: statusValue,
+            keyName: "taskStatus"
+        }
+        this.taskCrudApiCall(editTaskStatus)
+    }
+
+
+    editTaskName(changedNameValue) {
+
+        const newSubTask = {
+            taskID: this.props.task._id,
+            changedTaskName: changedNameValue,
+            keyName: "changedTaskName"
+        }
+
+        this.taskCrudApiCall(newSubTask)
+    }
+
+    addEditTaskComment(commentValue) {
+
+        const newSubTask = {
+            taskID: this.props.task._id,
+            taskComment: commentValue,
+            keyName: "taskComment"
+        }
+
+        this.taskCrudApiCall(newSubTask)
+    }
+
 
     deleteTask() {
 
@@ -47,6 +71,20 @@ class Task extends Component {
 
         axios
             .post("/tasks/task-delete", newSubTask)
+            .then(res => {
+                this.props.getTaskData()
+            })
+            .catch(err => console.log(err))
+    }
+
+    deleteComment() {
+
+        const newSubTask = {
+            taskID: this.props.task._id,
+        }
+
+        axios
+            .post("/tasks/task-comment-delete", newSubTask)
             .then(res => {
                 this.props.getTaskData()
             })
@@ -89,13 +127,30 @@ class Task extends Component {
                     submitFunction={this.addNewSubTask.bind(this)}
                 />
 
+
                 <SingleInputModal
                     modalTitle="Edit Task"
                     modalInputName="Edit Task:"
                     modalID={"editTaskModal" + taskID}
                     defaultValue={this.props.task.name}
-                    submitFunction={this.editTask.bind(this)}
+                    submitFunction={this.editTaskName.bind(this)}
                 />
+
+                <SingleInputModal
+                    modalTitle="Add Comment"
+                    modalInputName="Add Comment:"
+                    modalID={"addCommentModal" + taskID}
+                    submitFunction={this.addEditTaskComment.bind(this)}
+                />
+
+                <SingleInputModal
+                    modalTitle="Edit Comment"
+                    modalInputName="Edit Comment:"
+                    modalID={"editTaskCommentModal" + taskID}
+                    defaultValue={this.props.task.taskComment}
+                    submitFunction={this.addEditTaskComment.bind(this)}
+                />
+
 
                 <DeleteConfirmationModal
                     modalTitle="Delete Task"
@@ -104,9 +159,12 @@ class Task extends Component {
                     submitFunction={this.deleteTask.bind(this)}
                 />
 
-
-
-
+                <DeleteConfirmationModal
+                    modalTitle="Delete Comment"
+                    modalInputName="Delete Comment:"
+                    modalID={"DeleteCommentConfirmationModal" + taskID}
+                    submitFunction={this.deleteComment.bind(this)}
+                />
 
 
                 <div className="card rounded-3">
@@ -121,25 +179,27 @@ class Task extends Component {
                                     </div>
 
                                 </span>
-                                : <span class="dropdown float-right">
+                                : <span class="dropdown float-right mt-2">
                                     <button class="btn btn-sm btn-info dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Unactioned
+                                        {capitalizeFirstLetter(this.props.task.status)}
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                        <button class="dropdown-item" type="button">Inprogress</button>
-                                        <button class="dropdown-item" type="button">Closed</button>
-                                        <button class="dropdown-item" type="button">Delete</button>
+                                        {!(this.props.task.status === "UNACTIONED") && <button class="dropdown-item" type="button" onClick={() => this.changeTaskStatus("UNACTIONED")}>Unactioned</button>}
+                                        {!(this.props.task.status === "INPROGRESS") && <button class="dropdown-item" type="button" onClick={() => this.changeTaskStatus("INPROGRESS")}>Inprogress</button>}
+                                        {!(this.props.task.status === "CLOSED") && <button class="dropdown-item" onClick={() => this.changeTaskStatus("CLOSED")} type="button">Closed</button>}
+
+
                                     </div>
                                 </span>
                             }
                         </p>
-                        <p className="text-muted pb-2">{getReadableDate(this.props.task.date)} • {capitalizeFirstLetter(this.props.task.status)}
-                            <button className="btn btn-sm btn-dark float-right" data-toggle="modal" data-target={`#subTaskModal${taskID}`}><FontAwesomeIcon icon={faPlus} /> Subtask</button>
+                        <p className="text-muted">{getReadableDate(this.props.task.date)} • {capitalizeFirstLetter(this.props.task.status)}
+                            {this.props.isAdmin && <button className="btn btn-sm btn-dark float-right" data-toggle="modal" data-target={`#subTaskModal${taskID}`}><FontAwesomeIcon icon={faPlus} /> Subtask</button>}
                         </p>
                         {/* <ul className="list-group rounded-0"> */}
 
                         {this.props.task && this.props.task.subtasks.length > 0 &&
-                            <div class="card" style={{ "width": "100%" }}>
+                            <div class="card mt-4" style={{ "width": "100%" }}>
                                 <ul class="list-group list-group-flush">
                                     {this.props.task.subtasks.map(subtask => (
                                         <Subtask subtask={subtask} getTaskData={this.props.getTaskData} />
@@ -150,11 +210,28 @@ class Task extends Component {
                         }
 
                         {/* </ul> */}
-                        {this.props.task.taskComment && <div className="divider d-flex align-items-center my-4">
-                            <p className="text-center mx-3 mb-0" style={{ color: "#a2aab7" }}>
-                                {this.props.task.taskComment}
-                            </p>
-                        </div>
+                        {this.props.task.taskComment
+                            ? <div className="divider d-flex align-items-center mt-4 mb-2">
+                                <p className="m-0 w-100" style={{ color: "#a2aab7" }}>
+                                    {this.props.task.taskComment}
+                                    {!this.props.isAdmin && <span className="float-right">
+                                        <div class="btn-group" role="group">
+                                            <button className="btn btn-sm btn-secondary" data-toggle="modal" data-target={"#editTaskCommentModal" + taskID}><FontAwesomeIcon icon={faPencilAlt} /></button>
+                                            <button className="btn btn-sm btn-danger" data-toggle="modal" data-target={"#DeleteCommentConfirmationModal" + taskID}><FontAwesomeIcon icon={faTrash} /></button>
+                                        </div>
+
+                                    </span>
+                                    }
+
+                                </p>
+                            </div>
+                            : <span>
+                                {!this.props.isAdmin &&
+                                    <div className="float-right mt-3">
+                                        <button className="btn btn-sm btn-dark" data-toggle="modal" data-target={"#addCommentModal" + taskID}><FontAwesomeIcon icon={faPlus} /> Comment</button>
+                                    </div>}
+                            </span>
+
                         }
                     </div>
                 </div>
