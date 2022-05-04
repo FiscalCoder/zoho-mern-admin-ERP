@@ -23,7 +23,6 @@ router.post('/user-add', (req, res) => {
                 password: req.body.password,
                 role: req?.body?.role
             });
-            console.log(newUser)
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newUser.password, salt, (err, hash) => {
                     if (err) throw err;

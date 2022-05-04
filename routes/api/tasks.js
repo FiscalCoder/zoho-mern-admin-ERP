@@ -75,7 +75,6 @@ router.post('/task-edit', (req, res) => {
     Task
         .findOneAndUpdate({ _id: req.body.taskID }, updateFields)
         .then(task => {
-            console.log(task)
             return res.status(200).json({ message: 'Task edited successfully. Refreshing data...' })
         }).catch(err => console.log(err));
 
@@ -85,9 +84,7 @@ router.post('/task-delete', (req, res) => {
     Task
         .deleteOne({ _id: req.body.taskID })
         .then(task => {
-            console.log(task)
             Subtask.deleteMany({ taskID: req.body.taskID }).then(subtask => {
-                console.log(subtask)
                 return res.status(200).json({ message: 'Task deleted successfully. Refreshing data...' })
             })
         }).catch(err => console.log(err));
@@ -123,7 +120,6 @@ router.post('/subtask-add', (req, res) => {
     newTask
         .save()
         .then(task => {
-            console.log(task)
             return res.status(200).json({ message: 'SubTask added successfully. Refreshing data...' })
         }).catch(err => console.log(err));
 
@@ -154,7 +150,6 @@ router.post('/subtask-edit', (req, res) => {
     Subtask
         .findOneAndUpdate({ _id: req.body.subTaskID }, updateFields)
         .then(task => {
-            console.log(task)
             return res.status(200).json({ message: 'Subtask edited successfully. Refreshing data...' })
         }).catch(err => console.log(err));
 
@@ -174,7 +169,6 @@ router.post('/subtask-delete', (req, res) => {
     Subtask
         .deleteOne({ _id: req.body.subTaskID })
         .then(task => {
-            console.log(task)
             return res.status(200).json({ message: 'Subtask deleted successfully. Refreshing data...' })
         }).catch(err => console.log(err));
 
