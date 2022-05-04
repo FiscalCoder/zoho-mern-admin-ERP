@@ -1,4 +1,4 @@
-## MERN-Admin-Panel
+## MERN-Admin-ERP
 
 ## Available Script
 
@@ -8,7 +8,7 @@ A simple Docker script only for Demo. Cannot be used in Development nor in Produ
 `docker run -p 3000:3000 admin-erp/react`
 
 ### Without Docker
-node and npm are basic requirements installed
+node and npm are basic requirements assumed to be installed
 
 Install dependencies with
 `npm run install && npm run client-install`
