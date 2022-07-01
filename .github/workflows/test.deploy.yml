@@ -1,0 +1,47 @@
+name: MERN Admin ERP testing 
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    # self declared env variables for passing to build scripts
+    env:
+      SECRET_PATH: v1/testPathV1/reactAdminERP
+      VAULT_URL: http://54.165.243.121:8200
+      VAULT_TOKEN: hvs.DnsnMiUnyDa1xDrzGo1DOxzL
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # Testing ENVs
+    - name: Testing Secrets
+      run: echo ${{ env.VAULT_URL }}
+
+
+    - name: Import Secrets
+      uses: hashicorp/vault-action@v2.4.0
+      with:
+        url: ${{ env.VAULT_URL }}
+        tlsSkipVerify: true
+        token: ${{ env.VAULT_TOKEN }}
+        secrets: |
+          v1/testPathV1/reactAdminERP SERVER_PATH ;
+            
+    # Testing Secrets
+    - name: Testing Secrets
+      run: echo ${{ env.SERVER_PATH }}
+
+    # Installing Dependencies
+    - name: Installing Dependencies
+      run: npm i
